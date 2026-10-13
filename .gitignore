@@ -1,0 +1,12 @@
+# Ignore the virtual environment folder
+.venv/
+venv/
+ENV/
+
+# Ignore python cache files
+__pycache__/
+*.pyc
+
+# Ignore large data or model files if needed
+*.zip
+*.pkl
