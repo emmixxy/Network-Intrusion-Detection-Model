@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flow monitor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<header class="bar">
+  <div class="identity">
+    <span class="pulse" id="link-state" data-state="connecting" aria-hidden="true"></span>
+    <h1>Flow monitor</h1>
+    <p id="model-line">loading model</p>
+  </div>
+
+  <dl class="readout">
+    <div><dt>Scored</dt><dd id="stat-scored">0</dd></div>
+    <div><dt>Attacks</dt><dd id="stat-attacks" class="hot">0</dd></div>
+    <div><dt>Per minute</dt><dd id="stat-rate">0</dd></div>
+    <div><dt>Queue</dt><dd id="stat-queue">0</dd></div>
+  </dl>
+
+  <div class="threshold">
+    <label for="threshold">Alert above</label>
+    <input type="range" id="threshold" min="0.05" max="0.95" step="0.01" value="0.5">
+    <output id="threshold-value">0.50</output>
+  </div>
+</header>
+
+<section class="signal" aria-label="Live attack probability by flow">
+  <canvas id="strip" height="200"></canvas>
+  <p class="signal-empty" id="signal-empty">
+    No flows yet. Start a sensor: <code>python sensor.py demo</code>
+  </p>
+</section>
+
+<main>
+  <section class="ledger" aria-label="Scored flows">
+    <div class="ledger-head">
+      <h2>Scored flows</h2>
+      <div class="filters" role="group" aria-label="Filter flows">
+        <button data-filter="all" class="on">Everything</button>
+        <button data-filter="attack">Attacks</button>
+      </div>
+    </div>
+    <div class="rows" id="rows" tabindex="0">
+      <p class="placeholder">Flows appear here as they are scored.</p>
+    </div>
+  </section>
+
+  <aside class="inspector" aria-label="Flow detail">
+    <nav class="tabs" role="tablist">
+      <button role="tab" aria-selected="true" data-panel="detail">Detail</button>
+      <button role="tab" aria-selected="false" data-panel="probe">Test a flow</button>
+    </nav>
+
+    <div class="panel" id="panel-detail" role="tabpanel">
+      <p class="placeholder">Select a flow to see what drove its score.</p>
+    </div>
+
+    <div class="panel hidden" id="panel-probe" role="tabpanel">
+      <p class="hint">Send one flow straight to the model. Unlisted features fall back
+        to the training median the imputer stored.</p>
+      <div id="probe-fields"></div>
+      <button class="run" id="probe-run">Score this flow</button>
+      <div id="probe-result"></div>
+    </div>
+  </aside>
+</main>
+
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
